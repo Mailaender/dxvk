@@ -73,6 +73,13 @@ if platform == 'windows'
       '-Wl,--file-alignment=4096',
     ]
 
+    # Workaround a crash with EA anti-cheat's code signing checks.
+    if not get_option('debug')
+      link_args += [
+        '-Wl,--disable-long-section-names',
+      ]
+    endif
+
     # Wine's built-in back traces only work with dwarf4 symbols
     if get_option('debug')
       compiler_args += [
@@ -93,7 +100,7 @@ if platform == 'windows'
     endif
   else
     # setup file alignment + enable PDB output for MSVC builds
-    # PDBs are useful for Windows consumers of DXVK 
+    # PDBs are useful for Windows consumers of DXVK
     compiler_args += [
       '/Z7'
     ]
@@ -164,7 +171,7 @@ else
   if (not lib_sdl3.found() and not lib_sdl2.found() and not lib_glfw.found())
     error('SDL3, SDL2, or GLFW are required to build dxvk-native')
   endif
-  
+
   dxvk_name_prefix = 'dxvk_'
   dxvk_pkg_prefix = 'dxvk-'
 
